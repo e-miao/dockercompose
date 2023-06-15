@@ -1,0 +1,21 @@
+
+version: '3'
+services:
+  wechat:
+    image: bestwu/wechat
+    container_name: wechat
+    ipc: host
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - $HOME/wechat/wechat_files:/WeChatFiles #使用自己用户目录
+    environment:
+      - DISPLAY=unix$DISPLAY
+      - QT_IM_MODULE=ibus # 中文输入，这里根据系统输入法类型自行输入，默认是IBus
+      - XMODIFIERS=@im=ibus
+      - GTK_IM_MODULE=ibus
+      - GID=1000
+      - UID=1000
+      - AUDIO_GID=29
+      - VIDEO_GID=44
+        #      - DOCHAT_DPI
+
