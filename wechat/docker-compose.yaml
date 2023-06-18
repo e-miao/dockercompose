@@ -4,6 +4,9 @@ services:
   wechat:
     image: bestwu/wechat
     container_name: wechat
+      #restart: always
+    devices:
+      - /dev/snd
     ipc: host
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
@@ -17,5 +20,5 @@ services:
       - UID=1000
       - AUDIO_GID=29
       - VIDEO_GID=44
-        #      - DOCHAT_DPI
-
+      - DOCHAT_DPI=96
+ 
