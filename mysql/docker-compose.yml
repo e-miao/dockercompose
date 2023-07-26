@@ -6,7 +6,7 @@ services:
         image: mysql:5.7
  
         ports:
-          - "3306:3306"
+          - "3305:3306"
         environment:
             MYSQL_ROOT_PASSWORD: "root"
         command: 
@@ -17,4 +17,4 @@ services:
         volumes:
           - "./data:/var/lib/mysql"
           - "./log:/var/log"
-          - "./conf:/etc/mysql/conf.d"
+          - "./conf:/etc/mysql/"

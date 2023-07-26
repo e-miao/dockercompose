@@ -4,7 +4,7 @@ services:
   wechat:
     image: bestwu/wechat
     container_name: wechat
-      #restart: always
+    restart: always
     devices:
       - /dev/snd
     ipc: host

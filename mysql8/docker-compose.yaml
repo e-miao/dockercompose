@@ -13,6 +13,7 @@ services:
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin123
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      TZ: Asia/Shanghai
     ports:
       - '3306:3306'
     volumes:
