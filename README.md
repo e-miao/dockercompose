@@ -1,1 +1,2 @@
-# dockercompose
+# 简介
+记录自己常使用的组件,但是不想本地安装,使用docker-compose 安装和管理.
