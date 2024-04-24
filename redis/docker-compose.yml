@@ -1,7 +1,7 @@
 version: '2'
 services:
     redis:
-      image: redis:5.0.0
+      image: redis
       container_name: redis
       #command: redis-server --requirepass 123456
       ports:

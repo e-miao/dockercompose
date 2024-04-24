@@ -1,0 +1,23 @@
+auth:
+  type: DISABLED
+kafka:
+  clusters:
+  - bootstrapServers: 192.168.12.61:9092
+    name: 61-kafka
+    properties: {}
+    readOnly: false
+  - bootstrapServers: 192.168.12.175:9092
+    name: 175-kafka
+    properties: {}
+    readOnly: false
+  - bootstrapServers: 192.168.12.87:9092
+    name: 87-kafka
+    properties: {}
+    readOnly: false
+  - bootstrapServers: 192.168.17.155:9092
+    name: local-kafka
+    properties: {}
+    readOnly: false
+rbac:
+  roles: []
+webclient: {}

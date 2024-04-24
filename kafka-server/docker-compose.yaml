@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  zookeeper:
+    container_name: zookeeper
+    image: bitnami/zookeeper
+
+    ports:
+      - 2181:2181
+    environment:
+      TZ: 'Asia/Shanghai'
+      ZOO_SERVER_ID: 1
+      ALLOW_ANONYMOUS_LOGIN: yes
+
+  kafka:
+    container_name: kafka-one
+    image: bitnami/kafka:2.8.1
+    ports:
+      - 9092:9092
+      - 9999:9999
+    environment:
+      - TZ=Asia/Shanghai
+      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_BROKER_ID=1
+      - KAFKA_CFG_NUM_PARTITIONS=1
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://0.0.0.0:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.17.155:9092
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181/kafka
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - JMX_PORT=9999
+      - KAFKA_CFG_JMX_PORT=9999
+    volumes:
+      - ./data:/var/lib/kafka/data
+
+    depends_on:
+      - zookeeper
