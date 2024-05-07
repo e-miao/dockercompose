@@ -14,8 +14,16 @@ kafka:
     name: 87-kafka
     properties: {}
     readOnly: false
-  - bootstrapServers: 192.168.17.155:9092
-    name: local-kafka
+  - bootstrapServers: 192.168.20.103:9092
+    name: local-kafka(192.168.20.103)
+    properties: {}
+    readOnly: false
+  - bootstrapServers: idc.dbpublic01.kd.net:9092,idc.dbpublic02.kd.net:9092,idc.dbpublic03.kd.net:9092
+    name: idc.dbpublic01.kd.net:9092,idc.dbpublic02.kd.net:9092,idc.dbpublic03.kd.net:9092
+    properties: {}
+    readOnly: false
+  - bootstrapServers: 192.168.12.70:9092
+    name: 192.168.12.70:9092
     properties: {}
     readOnly: false
 rbac:
