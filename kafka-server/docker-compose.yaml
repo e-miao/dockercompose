@@ -20,7 +20,7 @@ services:
       - 9999:9999
     environment:
       - TZ=Asia/Shanghai
-      - KAFKA_CFG_NODE_ID=0
+      - KAFKA_CFG_NODE_ID=1
       - KAFKA_CFG_BROKER_ID=1
       - KAFKA_CFG_NUM_PARTITIONS=1
       - KAFKA_CFG_LISTENERS=PLAINTEXT://0.0.0.0:9092

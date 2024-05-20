@@ -14,6 +14,9 @@ services:
           --wait_timeout=31536000
           --interactive_timeout=31536000
           --max_connections=1000
+          --character-set-server=utf8mb4
+          --collation-server=utf8mb4_unicode_ci
+          --default-time-zone=UTC
         volumes:
           - "./data:/var/lib/mysql"
           - "./log:/var/log"

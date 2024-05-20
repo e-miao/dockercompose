@@ -1,0 +1,403 @@
+{
+  "msg_info": {
+    "SU_SUCCESS": {
+      "errno": 100,
+      "name": "成功",
+      "status": "成功",
+      "message": "",
+      "suggest": ""
+    },
+    "WR_DB_VERSION": {
+      "errno": 1000,
+      "name": "数据库版本",
+      "status": "警告",
+      "message": "源端数据库版本: '%s', 目标端数据库版本: '%s', 不同的版本可能会导致迁移失败",
+      "suggest": "选择与源端版本相同的数据库版本做目标端"
+    },
+    "WR_SQL_MODE": {
+      "errno": 1001,
+      "name": "参数sql_mode",
+      "status": "警告",
+      "message": "源端数据库设置: '%s', 目标端数据库设置: '%s', 不同的sql_mode设置可能会导致业务访问出错或不一致的结果",
+      "suggest": "修改目标端sql_mode设置: SET GLOBAL sql_mode='%s', 或将其写入配置文件并重启数据库"
+    },
+    "WR_INNODB_STRICT_MODE": {
+      "errno": 1002,
+      "name": "参数innodb_strict_mode",
+      "status": "警告",
+      "message": "源端数据库设置: '%s', 目标端数据库设置: '%s', 不同的innodb_strict_mode设置可能会导致业务访问出错或不一致的结果",
+      "suggest": "修改目标端innodb_strict_mode设置: SET GLOBAL innodb_strict_mode='%s', 或将其写入配置文件并重启数据库"
+    },
+    "WR_LOWER_CASE_TABLE_NAMES": {
+      "errno": 1003,
+      "name": "参数lower_case_table_names",
+      "status": "警告",
+      "message": "源端数据库设置: '%s', 目标端数据库设置: '%s', 不同的lower_case_table_names设置可能会导致业务访问出错或不一致的结果",
+      "suggest": "修改目标端lower_case_table_names设置: 将lower_case_table_names=%s写入配置文件并重启数据库"
+    },
+    "WR_MAX_EXECUTION_TIME": {
+      "errno": 1004,
+      "name": "参数max_execution_time",
+      "status": "警告",
+      "message": "源端数据库设置: '%s', 目标端数据库设置: '%s', 不同的max_execution_time设置可能会导致业务访问出错或不一致的结果",
+      "suggest": "修改目标端max_execution_time设置: SET GLOBAL max_execution_time='%s', 或将其写入配置文件并重启数据库"
+    },
+    "WR_MAX_JOIN_SIZE": {
+      "errno": 1005,
+      "name": "参数max_join_size",
+      "status": "警告",
+      "message": "源端数据库设置: '%s', 目标端数据库设置: '%s', 不同的max_join_size设置可能会导致业务访问出错或不一致的结果",
+      "suggest": "修改目标端max_join_size设置: SET GLOBAL max_join_size=%s, 或将其写入配置文件并重启数据库"
+    },
+    "WR_SQL_BIG_SELECTS": {
+      "errno": 1006,
+      "name": "参数sql_big_selects",
+      "status": "警告",
+      "message": "源端数据库设置: '%s', 目标端数据库设置: '%s', 不同的sql_big_selects设置可能会导致业务访问出错或不一致的结果",
+      "suggest": "修改目标端sql_big_selects设置: SET GLOBAL sql_big_selects=%s, 或将其写入配置文件并重启数据库"
+    },
+    "WR_SQL_SELECT_LIMIT": {
+      "errno": 1007,
+      "name": "参数sql_select_limit",
+      "status": "警告",
+      "message": "源端数据库设置: '%s', 目标端数据库设置: '%s', 不同的sql_select_limit设置可能会导致业务访问出错或不一致的结果",
+      "suggest": "修改目标端sql_select_limit设置: SET GLOBAL sql_select_limit=%s, 或将其写入配置文件并重启数据库"
+    },
+    "WR_TIME_ZONE": {
+      "errno": 1008,
+      "name": "参数time_zone",
+      "status": "警告",
+      "message": "源端数据库设置: '%s', 目标端数据库设置: '%s', 不同的time_zone设置可能会导致业务访问出错或不一致的结果",
+      "suggest": " 修改目标端time_zone设置: SET GLOBAL time_zone='%s', 或将其写入配置文件并重启数据库"
+    },
+    "WR_EXPIRE_LOGS": {
+      "errno": 1009,
+      "name": "源端expire_logs",
+      "status": "警告",
+      "message": "源端binlog保留时间为'%d', 迁移预估时间为'%d'秒, 保留时间小于迁移预估时间可能导致增量迁移时部分binlog丢失",
+      "suggest": "修改expire_logs_days(MySQL 5.7及以前版本)或binlog_expire_logs_seconds (MySQL 8.0): SET GLOBAL binlog_expire_logs_seconds = $estimated_time + 3600 或 SET GLOBAL expire_logs_days = $estimated_time/24/3600 + 1, $estimated_time为迁移预估时间"
+    },
+    "WR_GTID_MODE": {
+      "errno": 1011,
+      "name": "参数gtid_mode",
+      "status": "警告",
+      "message": "源端gtid_mode: '%s', 目标端gtid_mode: '%s', 源端和目标端不一致将导致主备连接建立失败",
+      "suggest": "在源端或目标端开启gtid: SET GLOBAL enforce_gtid_consistency=on; SET GLOBAL gtid_mode=OFF_PERMISSIVE; SET GLOBAL gtid_mode=ON_PERMISSIVE;  SET GLOBAL gtid_mode=ON, 并重启数据库"
+    },
+    "WR_NO_PRIMARY_KEY_TABLE": {
+      "errno": 1012,
+      "name": "无主键表%s",
+      "status": "警告",
+      "message": "表'%s'没有主键或唯一索引, 表大小: %s, 行数: %s, 可能导致增量数据同步延迟",
+      "suggest": "增加主键或创建唯一索引"
+    },
+    "WR_NO_DEFINER": {
+      "errno": 1013,
+      "name": "无DEFINER用户(%s)",
+      "status": "警告",
+      "message": "定义用户被删除, 目标端将不能创建 %s '%s'",
+      "suggest": "如果业务不需要'%s', 建议从源库删除"
+    },
+    "WR_SPECIAL_USER": {
+      "errno": 1014,
+      "name": "特殊网段用户",
+      "status": "警告",
+      "message": "源端用户'%s'只能从特定网段访问数据库, 迁移完成后可能导致访问异常",
+      "suggest": "迁移成功后, 手动删除用户'%s', 重新创建并授权允许他访问数据库"
+    },
+    "WR_TARGET_USER": {
+      "errno": 1015,
+      "name": "目标端已经存在用户",
+      "status": "警告",
+      "message": "源端用户'%s'在目标端已经存在, 如果继续迁移将会覆盖目标端用户, 可能会导致业务异常",
+      "suggest": "确认用户'%s'是否需要被迁移"
+    },
+    "WR_CK_VERSION": {
+      "errno": 1016,
+      "name": "数据库版本",
+      "status": "警告",
+      "message": "源端数据库版本: '%s', 目标端数据库版本: '%s', ClickHouse版本必须大于或等于21.3",
+      "suggest": "选择与源端版本相同的数据库版本做目标端"
+    },
+    "WR_SOURCE_INNODB_STRICT_MODE": {
+      "errno": 1017,
+      "name": "参数innodb_strict_mode",
+      "status": "警告",
+      "message": "源端数据库设置: '%s'",
+      "suggest": "修改源端innodb_strict_mode设置: SET GLOBAL innodb_strict_mode=on, 或将其写入配置文件并重启数据库"
+    },
+    "WR_SOURCE_LOWER_CASE_TABLE_NAMES": {
+      "errno": 1018,
+      "name": "参数lower_case_table_names",
+      "status": "警告",
+      "message": "源端数据库设置: '%s'",
+      "suggest": "修改源端lower_case_tables设置: 将'lower-case-table-names=0'写入配置文件并重启数据库"
+    },
+    "WR_SOURCE_MAX_EXEC_TIME": {
+      "errno": 1019,
+      "name": "参数max_execution_time",
+      "status": "警告",
+      "message": "源端数据库设置: '%s'",
+      "suggest": "修改源端max_execution_time设置: SET GLOBAL max_execution_time=0"
+    },
+    "WR_SOURCE_MAX_JOIN_SIZE": {
+      "errno": 1020,
+      "name": "参数max_join_size",
+      "status": "警告",
+      "message": "源端数据库设置: '%s'",
+      "suggest": "修改源端max_join_size设置: SET GLOBAL max_join_size=18446744073709551615 或者 SET GLOBAL sql_big_selects=on"
+    },
+    "WR_SOURCE_SQL_SELECT_LIMIT": {
+      "errno": 1021,
+      "name": "参数sql_select_limit",
+      "status": "警告",
+      "message": "源端数据库设置: '%s'",
+      "suggest": "修改源端sql_select_limit设置: SET GLOBAL sql_select_limit=18446744073709551615"
+    },
+    "ER_LOG_BIN": {
+      "errno": 2000,
+      "name": "参数log_bin",
+      "status": "失败",
+      "message": "源端数据库设置: '%s'",
+      "suggest": "参考授权语句, 开启binlog"
+    },
+    "ER_BINLOG_DO_DB": {
+      "errno": 2001,
+      "name": "参数--binlog-do-db",
+      "status": "失败",
+      "message": "源端Binlog_Do_DB设置但未包含了待迁移的数据库'%s', 针对数据库'%s'的数据变更不会记录binlog, 从而导致增量数据不会被同步到目标端",
+      "suggest": "修改源端配置文件,将数据库'%s'设置到binlog-do-db参数"
+    },
+    "ER_BINLOG_IGNORE_DB": {
+      "errno": 2002,
+      "name": "参数--binlog-ignore-db",
+      "status": "失败",
+      "message": "源端Binlog_Ignore_DB设置并包含了待迁移的数据库'%s', 针对数据库'%s'的数据变更不会记录binlog, 从而导致增量数据不会被同步到目标端",
+      "suggest": "修改源端配置文件,将数据库'%s'从binlog-do-db参数中移除"
+    },
+    "ER_REPLICATE_DO_DB": {
+      "errno": 2003,
+      "name": "参数--replicate-do-db",
+      "status": "失败",
+      "message": "目标端Replicate_Do_DB设置但未包含了待迁移的数据库'%s', 针对数据库'%s'的数据变更不会记录binlog, 从而导致增量数据不会被同步到目标端",
+      "suggest": "修改目标端配置文件,将数据库'%s'设置到replicate-do-db参数"
+    },
+    "ER_REPLICATE_IGNORE_DB": {
+      "errno": 2004,
+      "name": "参数--replicate-ignore-db",
+      "status": "失败",
+      "message": "目标端Replicate_Ignore_DB设置并包含了待迁移的数据库'%s', 针对数据库'%s'的数据变更不会记录binlog, 从而导致增量数据不会被同步到目标端",
+      "suggest": "修改源端配置文件,将数据库'%s'从replicate-do-db参数中移除"
+    },
+    "ER_SERVER_ID": {
+      "errno": 2005,
+      "name": "服务器标识",
+      "status": "失败",
+      "message": "源端server_id: '%s', 目标端server_id: '%s', 源端与目标端相同将导致建立主备复制失败",
+      "suggest": "修改目标端server_id为其它值: SET GLOBAL server_id=$new_server_id, 或将server-id=$new_server_id写入配置文件, $new_server_id为非源端server_id"
+    },
+    "ER_TARGET_BINLOG_FORMAT": {
+      "errno": 2006,
+      "name": "目标端Binlog格式",
+      "status": "失败",
+      "message": "目标端binlog_format不是ROW模式, 将导致数据迁移失败",
+      "suggest": "修改目标端binlog_format: SET GLOBAL binlog_format='row', 或将binlog-format='row'写入配置文件并重启数据库"
+    },
+    "ER_SOURCE_BINLOG_FORMAT": {
+      "errno": 2007,
+      "name": "源端binlog格式",
+      "status": "失败",
+      "message": "源端binlog_format为'%s', canal模式增量不能处理部分数据,将导致源端和目标端数据不一致",
+      "suggest": "修改源端binlog_format为row: SET GLOBAL binlog_format='row', 或配置文件中增加binlog-format=row并重启数据库"
+    },
+    "ER_BINLOG_ROW_IMAGE": {
+      "errno": 2008,
+      "name": "源端binlog_row_image参数",
+      "status": "失败",
+      "message": "源端binlog_row_image为'%s', 增量同步可能会丢失部分列数据, 从而导致源端目标端数据不一致",
+      "suggest": "修改源端binlog_row_image为FULL: SET GLOBAL binlog_row_image='FULL', 或在配置文件中增加binlog-row-image=full并重启数据库"
+    },
+    "ER_MASTER_INFO_REPOSITORY": {
+      "errno": 2009,
+      "name": "目标端master_info_repository参数",
+      "status": "失败",
+      "message": "目标端master_info_repository为'%s', 在slave模式下建立主备通道将报错, 不能进行增量同步",
+      "suggest": "修改目标端master_info_repository为table: SET GLOBAL master_info_repository='table', 或在配置文件中增加master-info-repository=table并重启数据库"
+    },
+    "ER_RELAY_LOG_INFO_REPOSITORY": {
+      "errno": 2010,
+      "name": "目标端relay_log_info_repository参数",
+      "status": "失败",
+      "message": "目标端relay_log_info_repository为'%s', 在slave模式下建立主备通道将报错, 不能进行增量同步",
+      "suggest": "修改目标端relay_log_info_repository为table: SET GLOBAL relay_log_info_repository='table', 或在配置文件中增加relay-log-info-repository=table并重启数据库"
+    },
+    "ER_SOURCE_PRIVILEGE": {
+      "errno": 2011,
+      "name": "源端权限",
+      "status": "失败",
+      "message": "源端用户缺少权限: %s",
+      "suggest": "为用户'%s'授予权限: %s"
+    },
+    "ER_CREATE_PRIVILEGE": {
+      "errno": 2012,
+      "name": "创建权限",
+      "status": "失败",
+      "message": "不能在目标端创建对象",
+      "suggest": "为目标端用户授予创建权限: GRANT CREATE on *.* to $user; $user为目标端连接用户"
+    },
+    "ER_CREATE_VIEW_PRIVILEGE": {
+      "errno": 2013,
+      "status": "失败",
+      "name": "创建视图权限",
+      "message": "不能在目标端创建视图",
+      "suggest": "为目标端用户授予创建视图权限: GRANT CREATE VIEW on *.* to $user; GRANT DROP on *.* to $user; $user为目标端连接用户"
+    },
+    "ER_CREATE_ROUTINE_PRIVILEGE": {
+      "errno": 2014,
+      "name": "创建程式权限",
+      "status": "失败",
+      "message": "不能在目标端创建函数或存储过程",
+      "suggest": "为目标端用户授予创建程序权限: GRANT CREATE ROUTINE on *.* to $user; $user为目标端连接用户"
+    },
+    "ER_SOURCE_CONNECTIVITY": {
+      "errno": 2015,
+      "name": "源端连通性",
+      "status": "失败",
+      "message": "不能连接源端数据库:%s",
+      "suggest": ""
+    },
+    "ER_TARGET_CONNECTIVITY": {
+      "errno": 2016,
+      "name": "目标端连通性",
+      "status": "失败",
+      "message": "不能连接目标端数据库:%s",
+      "suggest": ""
+    },
+    "ER_MONGO_CANT_SYNC": {
+      "error": 2017,
+      "name": "增量同步设置",
+      "status": "失败",
+      "message": "源端没有设置集群模式, 不能进行增量同步",
+      "suggest": ""
+    },
+    "ER_MONGO_SOURCE_GET_META": {
+      "error": 2019,
+      "name": "源端权限",
+      "status": "失败",
+      "message": "不能获取源端源数据",
+      "suggest": ""
+    },
+    "ER_MONGO_TARGET_DDL": {
+      "error": 2018,
+      "name": "目标端DDL权限",
+      "status": "失败",
+      "message": "目标端不能执行DDL",
+      "suggest": ""
+    },
+    "ER_MONGO_SOURCE_TABLE_ACCESS": {
+      "error": 2020,
+      "name": "源端表%s访问权限",
+      "status": "失败",
+      "message": "不能访问源端源表%s",
+      "suggest": ""
+    },
+    "ER_CK_TARGET_PRIVILEGE": {
+      "error": 2021,
+      "name": "ClickHouse目标端权限",
+      "status": "失败",
+      "message": "目标库权限检查失败，授权信息要求ALL权限",
+      "suggest": "增加授权：grant (on cluster $cluster) all on *.* to '%s' with grant option"
+    },
+    "ER_QUERY_ERROR": {
+      "error": 2022,
+      "name": "查询结果",
+      "status": "失败",
+      "message": "执行查询失败: SQL语句(%s), 错误信息(%s)",
+      "suggest": "%s"
+    },
+    "ER_NO_PRIMARY_KEY_TABLE_CK": {
+      "errno": 1022,
+      "name": "无主键表%s",
+      "status": "失败",
+      "message": "表'%s'没有主键, 表大小: %s, 行数: %s, 不能迁移到Clickhouse",
+      "suggest": "增加主键"
+    }
+  },
+  "class_list": [
+    {
+      "name": "mysql",
+      "list": [
+        {
+          "type": "connectivity",
+          "name": "连接性检查"
+        },
+        {
+          "type": "setting",
+          "name": "数据库设置"
+        },
+        {
+          "type": "object",
+          "name": "数据库对象"
+        },
+        {
+          "type": "user",
+          "name": "数据库用户"
+        },
+        {
+          "type": "privilege",
+          "name": "权限"
+        },
+        {
+          "name": "重复通道检查",
+          "type": "taskoverlap"
+        }
+      ]
+    },
+    {
+      "name": "mongo",
+      "list": [
+        {
+          "type": "connectivity",
+          "name": "连接性检查"
+        },
+        {
+          "type": "setting",
+          "name": "数据库设置"
+        },
+        {
+          "type": "privilege",
+          "name": "权限"
+        },
+        {
+          "name": "重复通道检查",
+          "type": "taskoverlap"
+        }
+      ]
+    },
+    {
+      "name": "my2ck",
+      "list": [
+        {
+          "type": "connectivity",
+          "name": "连接性检查"
+        },
+        {
+          "type": "setting",
+          "name": "数据库设置"
+        },
+        {
+          "type": "object",
+          "name": "数据库对象"
+        },
+        {
+          "name": "重复通道检查",
+          "type": "taskoverlap"
+        },
+        {
+          "type": "privilege",
+          "name": "权限"
+        }
+      ]
+    }
+  ]
+}

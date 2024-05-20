@@ -22,8 +22,20 @@ kafka:
     name: idc.dbpublic01.kd.net:9092,idc.dbpublic02.kd.net:9092,idc.dbpublic03.kd.net:9092
     properties: {}
     readOnly: false
-  - bootstrapServers: 192.168.12.70:9092
-    name: 192.168.12.70:9092
+  - bootstrapServers: 192.168.12.70:9092,192.168.12.71:9092,192.168.12.74:9092
+    name: 70-HA-kafka
+    properties: {}
+    readOnly: false
+  - bootstrapServers: 192.168.12.245:9092
+    name: 245-kafka
+    properties: {}
+    readOnly: false
+  - bootstrapServers: 192.168.12.244:9092
+    name: 244-kafka
+    properties: {}
+    readOnly: false
+  - bootstrapServers: db.public04.keendata.net:9092,db.public05.keendata.net:9092,db.public06.keendata.net:9092
+    name: db.public04.keendata.net:9092,db.public05.keendata.net:9092,db.public06.keendata.net:9092
     properties: {}
     readOnly: false
 rbac:

@@ -1,0 +1,18 @@
+version: '3.0'
+services:
+  dts-api-server:
+    image: squids/dbmotion-community:latest
+    container_name: dts-api-server
+    environment:
+      - SERVER_MODE=DOCKER
+      - MYSQL_URI=admin:admin123@(192.168.20.103:3306)/dbmotion
+    volumes:
+      - ./dbmotion:/dbmotion/log
+    privileged: true
+  dts-ui:
+    image: squids/dbmotion-ui-community:latest
+    container_name: dts-ui
+    ports:
+      - "30000:80"
+    depends_on:
+      - dts-api-server

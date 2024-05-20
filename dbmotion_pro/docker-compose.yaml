@@ -1,0 +1,214 @@
+version: '3.8'
+
+services:
+
+  dts-mysql:
+    image: swr.cn-east-2.myhuaweicloud.com/squids/mysql:latest
+    container_name: dts-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: dbmotion 
+      MYSQL_DATABASE: phoenix
+    command: [ 'mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', --default-time-zone=UTC ]
+    volumes:
+      - mysql-conf:/etc/mysql/conf.d
+    depends_on:
+      - monitor-conf
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 30s
+      retries: 10
+    networks:
+      dts-network:
+
+  dts-proxy-files:
+    image: swr.cn-east-2.myhuaweicloud.com/squids/dbmotion-proxy-linux:latest
+    container_name: dts-proxy-files
+    command: [ sh, -c, 'cp * /client_files/' ]
+    volumes:
+      - /var/dbmotion/client_files:/client_files
+    privileged: true
+    networks:
+      dts-network:
+
+  dts-proxy-server:
+    image: swr.cn-east-2.myhuaweicloud.com/squids/dbmotion-proxy-server:latest
+    container_name: dts-proxy-server
+    command: [ -L, 'forward+ssh://:3002' ]
+    ports:
+      - "31002:3002"
+    networks:
+      dts-network:
+
+  dts-api-server:
+    image: swr.cn-east-2.myhuaweicloud.com/squids/dbmotion:2308.01
+    container_name: dts-api-server
+    environment:
+      - SERVER_MODE=DOCKER
+      - MYSQL_URI=root:dbmotion@(dts-mysql)/dbmotion
+      - PHOENIX_ENDPOINT=http://phoenix:9091/phoenix/api/v2/
+    depends_on:
+      monitor-conf:
+        condition: service_started
+      dts-mysql:
+        condition: service_healthy
+      dts-proxy-files:
+        condition: service_started
+      dts-proxy-server:
+        condition: service_started
+    volumes:
+      - /var/dbmotion:/dbmotion/log
+      - /var/dbmotion/client_files:/client_files
+    ports:
+      - "31000:3000"
+      # export grpc server
+      - "31001:3001"
+    privileged: true
+    networks:
+      dts-network:
+
+  dts-ui:
+    image: swr.cn-east-2.myhuaweicloud.com/squids/dbmotion-ui:2308.01
+    container_name: dts-ui
+    ports:
+      - "30000:80"
+    depends_on:
+      - monitor-conf
+      - dts-mysql
+      - dts-api-server
+    networks:
+      dts-network:
+
+  phoenix:
+    image: swr.cn-east-2.myhuaweicloud.com/squids/phoenix:v1.4.1-dbmotion
+    container_name: phoenix
+    entrypoint:
+      - /phoenix
+      - --database-address=dts-mysql
+      - --database-port=3306
+      - --database-username=root
+      - --database-password=dbmotion
+      - --database-database=phoenix
+      - --data-dir=/etc/phoenix/monitor
+      - --rule-config=/rules.yml
+      - --prom-url=http://prometheus:9090
+      - --alert-url=http://alertmanager:9093
+      - --tmpl-dir=/etc/alert/tmpl
+      - --alerting-target-type-file-path=/etc/phoenix/conf/target_type.yml
+      - --alerting-type-file-path=/etc/phoenix/conf/alerting_type.yml
+      - --alerting-model-file-paths=/etc/phoenix/conf/dbmotion_model.yml
+      - --default-templates-file-path=/etc/phoenix/conf/templates.yml
+      - --notify-base-url=http://phoenix:9091
+      - --http-receivers-discovery-endpoint=http://dts-api-server:3000/api/v2/alert/phoenix/receivers
+      - --http-targets-discovery-endpoints=http://dts-api-server:3000/api/v2/alert/phoenix/targets
+      - --alert-hook=http://dts-api-server:3000/api/v2/alert/notice
+      - --http-discovery-interval=60
+      - --enable-multi-tenant=false
+      - --tailor-port=15100
+    ports:
+      - "9091:9091"
+    volumes:
+      - phoenix-volume:/etc/phoenix/conf
+      - monitor-volume:/etc/phoenix/monitor
+    depends_on:
+      monitor-conf:
+        condition: service_started
+      dts-mysql:
+        condition: service_healthy
+      dts-api-server:
+        condition: service_started
+    privileged: true
+    networks:
+      dts-network:
+
+  prometheus:
+    image: swr.cn-east-2.myhuaweicloud.com/squids/prometheus:v2.30.4
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    command: [ "--config.file=/etc/prometheus/prometheus.yml",
+               "--web.enable-lifecycle",
+               "--storage.tsdb.retention=180d",
+               "--storage.tsdb.path=/prometheus/data",
+               "--storage.tsdb.retention.time=10d",
+               "--web.route-prefix=/",
+               "--storage.tsdb.no-lockfile",
+               "--storage.tsdb.min-block-duration=2h",
+               "--storage.tsdb.max-block-duration=2h",
+               "--log.level=debug" ]
+    volumes:
+      - monitor-volume:/etc/prometheus
+    depends_on:
+      - monitor-conf
+      - dts-api-server
+    networks:
+      dts-network:
+
+  alertmanager:
+    image: swr.cn-east-2.myhuaweicloud.com/squids/alertmanager:v0.23.0
+    container_name: alertmanager
+    ports:
+      - "9093:9093"
+    command: [ "--storage.path=/alertmanager/data",
+               "--config.file=/etc/alertmanager/alertmanager.yml" ]
+    volumes:
+      - monitor-volume:/etc/alertmanager
+      - tmpl-volume:/etc/alert/tmpl
+    depends_on:
+      - monitor-conf
+      - dts-api-server
+    networks:
+      dts-network:
+
+  grafana:
+    image: swr.cn-east-2.myhuaweicloud.com/squids/grafana:9.2.8
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_AUTH_ANONYMOUS_ENABLED: true
+      GF_SECURITY_ALLOW_EMBEDDING: true
+    volumes:
+      - datasource-conf:/etc/grafana/provisioning/datasources
+      - dashboards-conf:/etc/grafana/provisioning/dashboards
+      - dashboards-volumes:/var/lib/grafana/dashboards
+    depends_on:
+      - monitor-conf
+      - prometheus
+    networks:
+      dts-network:
+
+  monitor-conf:
+    image: swr.cn-east-2.myhuaweicloud.com/squids/dbmotion-monitor-conf:latest
+    container_name: monitor-conf
+    volumes:
+      - phoenix-volume:/phoenix-conf
+      - monitor-volume:/monitor-conf
+      - tmpl-volume:/alert-tmpl
+      - mysql-conf:/mysql
+      - datasource-conf:/grafana/config/datasources
+      - dashboards-conf:/grafana/config/dashboards
+      - dashboards-volumes:/grafana/dashboards
+    networks:
+      dts-network:
+
+volumes:
+  phoenix-volume:
+  monitor-volume:
+  tmpl-volume:
+  mysql-conf:
+  datasource-conf:
+  dashboards-conf:
+  dashboards-volumes:
+
+# networks:
+#   dts-network:
+#     ipam:
+#       config:
+#       - subnet: 172.22.22.0/24
+#         gateway: 172.22.22.1
+
+networks:
+  dts-network:
+    driver: bridge
+    
